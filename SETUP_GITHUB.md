@@ -1,0 +1,215 @@
+# Пошаговая настройка GitHub — cicd-sandbox
+
+> Выполняйте после `git init` и первого push.  
+> Замените `your-org/cicd-sandbox` на ваш реальный org/repo.
+
+---
+
+## Шаг 1. Создать репозиторий на GitHub
+
+1. GitHub → New repository → `cicd-sandbox`
+2. **Не** добавлять README/license (уже есть локально)
+3. Visibility: private (для Merge Queue нужен Team plan на private)
+
+```bash
+git init
+git add .
+git commit -m "chore: initial sandbox for CI/CD process testing"
+git branch -M main
+git remote add origin https://github.com/your-org/cicd-sandbox.git
+git push -u origin main
+```
+
+---
+
+## Шаг 2. Создать ветку develop
+
+```bash
+git checkout -b develop
+git push -u origin develop
+git checkout main
+```
+
+Или через GitHub UI: Branches → create `develop` from `main`.
+
+---
+
+## Шаг 3. GitHub Secrets
+
+Repository → **Settings → Secrets and variables → Actions → New repository secret**
+
+| Name | Value |
+|------|-------|
+| `TELEGRAM_BOT_TOKEN` | токен от @BotFather |
+| `TELEGRAM_CHAT_ID` | ID группы (число, напр. `-1001234567890`) |
+
+**Проверка chat_id:**
+
+```bash
+curl "https://api.telegram.org/bot<TOKEN>/getUpdates"
+```
+
+---
+
+## Шаг 4. GitHub Environments
+
+Settings → **Environments**
+
+### development
+
+- Deployment branches: `develop` (или All)
+- Secrets deploy — по необходимости
+
+### production
+
+- **Required reviewers:** 1–2 человека
+- Deployment branches: `main` only
+- Secrets deploy — по необходимости
+
+---
+
+## Шаг 5. Rulesets
+
+Settings → **Rules → Rulesets → New ruleset**
+
+### Ruleset «Protect develop»
+
+| Параметр | Значение |
+|----------|----------|
+| Enforcement | Active |
+| Target | Branch `develop` |
+| Restrict creations | off |
+| Restrict updates | on |
+| Restrict deletions | on |
+| Require pull request | on, 1 approval |
+| Require status checks | `lint`, `test`, `build` (strict) |
+| Require conversation resolution | on |
+| Require merge queue | on (если Team plan) |
+| Block force pushes | on |
+
+**Bypass list:** пусто.
+
+### Ruleset «Protect main»
+
+То же +:
+
+- Required approvals: **2** (рекомендуется)
+- Require review from CODEOWNERS: on
+
+---
+
+## Шаг 6. Merge Queue (Team plan)
+
+В каждом Ruleset → **Require merge queue** → Enable.
+
+Проверка:
+
+1. Создать 2 feature PR в develop
+2. Merge первый через queue
+3. Второй автоматически пересобирается в merge_group
+
+---
+
+## Шаг 7. Cursor Bugbot
+
+1. [cursor.com/dashboard](https://cursor.com/dashboard) → Integrations → GitHub
+2. Install / Authorize для org
+3. Выбрать репозиторий `cicd-sandbox`
+4. Bugbot → **Enable**
+5. Убедиться, что `.cursor/BUGBOT.md` в репо
+
+---
+
+## Шаг 8. CODEOWNERS teams
+
+Заменить в `.github/CODEOWNERS`:
+
+```text
+@your-org/backend  → @real-org/real-team
+@your-org/devops   → @real-org/devops-team
+```
+
+Teams должны существовать в GitHub org и иметь доступ к репо.
+
+---
+
+## Шаг 9. Тестовый прогон
+
+### 9.1 Feature PR → develop
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feature/TEST-001-hello-ci
+# изменить src/index.js или добавить тест
+npm run ci
+git add .
+git commit -m "feat: test CI pipeline"
+git push -u origin feature/TEST-001-hello-ci
+```
+
+1. Создать PR → base: `develop`
+2. Дождаться CI (lint, test, build)
+3. Дождаться Bugbot comment (может занять несколько минут)
+4. Approve + Merge (через queue)
+5. Проверить Telegram сообщение
+6. Проверить deploy-dev workflow (push на develop)
+
+### 9.2 Release PR → main
+
+```bash
+# через GitHub UI: PR develop → main
+```
+
+1. CI зелёный
+2. 2 approvals (если настроено)
+3. Merge
+4. Telegram в канал
+5. Actions → Deploy Production → input `deploy` → approve environment
+
+### 9.3 Negative tests
+
+- [ ] Direct push в develop → отклонён
+- [ ] Direct push в main → отклонён
+- [ ] Merge без CI → заблокирован
+- [ ] Deploy prod без input `deploy` → fail
+
+---
+
+## Шаг 10. Обновить PROJECT_CONFIG.yaml
+
+После создания реального репо обновить:
+
+```yaml
+repositories:
+  - name: "real-org/cicd-sandbox"
+github_org: "real-org"
+owners:
+  backend: "@real-org/backend-team"
+  # ...
+```
+
+---
+
+## Чеклист готовности
+
+- [ ] main и develop на remote
+- [ ] Secrets настроены
+- [ ] Environments созданы
+- [ ] Rulesets активны
+- [ ] Merge Queue работает (или задокументирован отказ)
+- [ ] Bugbot комментирует PR
+- [ ] Telegram приходит после merge
+- [ ] deploy-dev срабатывает на develop
+- [ ] deploy-prod требует manual approval
+
+---
+
+## Найденные изъяны (заполнять при тестировании)
+
+| # | Что | Ожидание | Факт | Исправление |
+|---|-----|----------|------|-------------|
+| 1 | | | | |
+| 2 | | | | |
+
+Копируйте строки в issue или обновляйте `plan-github-cursor-telegram-merge.md`.

@@ -1,0 +1,20 @@
+{
+  "name": "cicd-sandbox",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Тестовый проект для отработки CI/CD процесса: GitHub + Bugbot + Telegram",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint src tests",
+    "test": "node --test tests/**/*.test.js",
+    "build": "node scripts/build.js",
+    "ci": "npm run lint && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "eslint": "^9.28.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

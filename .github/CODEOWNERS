@@ -1,0 +1,16 @@
+# CODEOWNERS — замените @your-org/* на реальные GitHub teams/users
+
+# Application code
+/src/                    @your-org/backend
+/tests/                  @your-org/backend
+/scripts/                @your-org/backend
+
+# CI/CD и инфраструктура (обязательный review)
+/.github/                @your-org/devops
+/.cursor/                @your-org/devops
+/scripts/build.js        @your-org/devops
+
+# Документация процесса
+/PROJECT_CONFIG.yaml     @your-org/tech-leads
+/plan-*.md               @your-org/tech-leads
+/github-cursor-telegram-merge-process.md @your-org/tech-leads

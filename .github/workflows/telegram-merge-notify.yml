@@ -1,0 +1,68 @@
+name: Telegram Merge Notify
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - develop
+      - main
+
+jobs:
+  notify:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram notification
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PROJECT_NAME: cicd-sandbox
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.pull_request.base.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          MERGED_BY: ${{ github.event.pull_request.merged_by.login }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "Telegram secrets not configured — skipping notification"
+            exit 0
+          fi
+
+          if [ "$BRANCH" = "develop" ]; then
+            BRANCH_LABEL="develop (staging)"
+            PULL_CMD="git fetch origin && git checkout develop && git pull origin develop"
+          else
+            BRANCH_LABEL="main (production)"
+            PULL_CMD="git fetch origin && git checkout main && git pull origin main"
+          fi
+
+          MESSAGE=$(cat <<EOF
+          ✅ *${PROJECT_NAME}* — PR merged
+
+          📦 Repo: \`${REPO}\`
+          🌿 Branch: \`${BRANCH_LABEL}\`
+          🔗 PR #${PR_NUMBER}: ${PR_TITLE}
+          👤 Merged by: ${MERGED_BY}
+
+          *Что сделать локально:*
+          \`\`\`
+          ${PULL_CMD}
+          \`\`\`
+
+          В feature-ветке:
+          \`\`\`
+          git merge origin/${BRANCH}
+          \`\`\`
+
+          ${PR_URL}
+          EOF
+          )
+
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg chat_id "$TELEGRAM_CHAT_ID" \
+              --arg text "$MESSAGE" \
+              '{chat_id: $chat_id, text: $text, parse_mode: "Markdown", disable_web_page_preview: true}')"

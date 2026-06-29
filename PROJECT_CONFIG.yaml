@@ -1,0 +1,43 @@
+# --- PROJECT CONFIG ---
+# Тестовый sandbox для отработки плана GitHub + Cursor Bugbot + Telegram
+
+project_name: "cicd-sandbox"
+
+repo_mode: single
+
+repositories:
+  - name: "your-org/cicd-sandbox"
+    role: full
+    default_branch: main
+    staging_branch: develop
+    stack: "node"
+
+branches:
+  production: main
+  staging: develop
+  feature_prefix: feature
+
+ci_jobs:
+  - lint
+  - test
+  - build
+
+github_org: "your-org"
+github_plan: team
+
+cursor_bugbot_mode: advisory
+
+telegram_bot_token_secret: TELEGRAM_BOT_TOKEN
+telegram_chat_id_secret: TELEGRAM_CHAT_ID
+
+deploy_dev_trigger: push
+deploy_prod_trigger: manual
+deploy_prod_environment: production
+
+owners:
+  backend: "@your-org/backend"
+  frontend: "@your-org/frontend"
+  devops: "@your-org/devops"
+  tech_lead: "@your-org/tech-leads"
+
+cross_repo_pr_policy: "указывать номер PR в соседнем репо в описании"
