@@ -5,7 +5,7 @@
 1. Все изменения — через **Pull Request**
 2. Direct push в `develop` и `main` **запрещён** (Rulesets)
 3. Перед PR: `npm run ci`
-4. Bugbot-комментарии — просмотреть и ответить/исправить
+4. Copilot / human review — просмотреть замечания перед merge
 5. После merge — дождаться Telegram и сделать `git pull`
 
 ## Именование веток

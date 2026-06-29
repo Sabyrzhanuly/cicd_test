@@ -117,13 +117,42 @@ Settings → **Rules → Rulesets → New ruleset**
 
 ---
 
-## Шаг 7. Cursor Bugbot
+## Шаг 7. GitHub Copilot (Free)
+
+> Вместо Cursor Bugbot на первом этапе.  
+> Документация: [About Copilot code review](https://docs.github.com/en/copilot/concepts/agents/code-review)
+
+### 7.1 Включить Copilot Free
+
+1. GitHub → аватар → **Settings** → **Copilot** → **Start using Copilot Free**
+2. Или [github.com/settings/copilot](https://github.com/settings/copilot)
+
+Free включает: автодополнение в IDE, ограниченный chat.  
+**Не включает:** автоматический [Copilot code review](https://docs.github.com/en/copilot/concepts/agents/code-review) в PR (нужен Pro/Pro+).
+
+### 7.2 Инструкции для репозитория
+
+Файл `.github/copilot-instructions.md` уже в репо — Copilot учитывает его при работе с кодом.
+
+### 7.3 AI-помощь при разработке (Free)
+
+- VS Code / Cursor / JetBrains — расширение **GitHub Copilot**
+- Перед PR: `npm run ci`
+- Ревью PR — **человек** (approval в Ruleset)
+
+### 7.4 Copilot code review в PR (опционально, Pro)
+
+Когда появится Copilot Pro:
+
+1. Repo → **Settings** → **Copilot** → **Code review**
+2. Включить automatic review или в PR: **Reviewers** → **Copilot**
+3. CLI: `gh pr edit <N> --add-reviewer copilot`
+
+### 7.5 Cursor Bugbot (позже, опционально)
 
 1. [cursor.com/dashboard](https://cursor.com/dashboard) → Integrations → GitHub
-2. Install / Authorize для org
-3. Выбрать репозиторий `cicd-sandbox`
-4. Bugbot → **Enable**
-5. Убедиться, что `.cursor/BUGBOT.md` в репо
+2. Bugbot → Enable
+3. Правила: `.cursor/BUGBOT.md`
 
 ---
 
@@ -157,10 +186,9 @@ git push -u origin feature/TEST-001-hello-ci
 
 1. Создать PR → base: `develop`
 2. Дождаться CI (lint, test, build)
-3. Дождаться Bugbot comment (может занять несколько минут)
-4. Approve + Merge (через queue)
-5. Проверить Telegram сообщение
-6. Проверить deploy-dev workflow (push на develop)
+3. Human approval + merge
+4. Проверить Telegram сообщение
+5. Проверить deploy-dev workflow (push на develop)
 
 ### 9.2 Release PR → main
 
@@ -205,7 +233,8 @@ owners:
 - [ ] Environments созданы
 - [ ] Rulesets активны
 - [ ] Merge Queue работает (или задокументирован отказ)
-- [ ] Bugbot комментирует PR
+- [ ] Copilot Free активен (или Pro + code review)
+- [ ] Bugbot комментирует PR (опционально)
 - [ ] Telegram приходит после merge
 - [ ] deploy-dev срабатывает на develop
 - [ ] deploy-prod требует manual approval

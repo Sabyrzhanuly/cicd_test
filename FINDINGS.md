@@ -34,7 +34,14 @@
 - **Исправление:** создан полный регламент с §11–§20
 - **Статус:** fixed
 
-### [2026-06-29] Telegram Markdown ломается на спецсимволах
+### [2026-06-29] Copilot Free вместо Cursor Bugbot
+
+- **Этап плана:** Этап 5 — AI review
+- **Ожидание:** Bugbot комментирует каждый PR
+- **Факт:** Copilot Free не включает code review в PR (только Pro+); Free = IDE + copilot-instructions.md
+- **Исправление:** provider `github_copilot`, human review в PR; Bugbot отложен; добавить в план вариант A/B
+- **Статус:** fixed в sandbox, open в plan-github-cursor-telegram-merge.md
+
 
 - **Этап плана:** Этап 4 — Telegram
 - **Ожидание:** сообщение с parse_mode Markdown всегда доставляется

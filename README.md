@@ -2,7 +2,7 @@
 
 Тестовый проект для отработки CI/CD процесса:
 
-**GitHub (PR + Rulesets + Merge Queue) → Cursor Bugbot → Telegram notify → Deploy**
+**GitHub (PR + Rulesets) → Copilot Free → Telegram → Deploy**
 
 ## Быстрый старт
 
@@ -19,7 +19,8 @@ npm run ci          # lint + test + build
   telegram-merge-notify.yml   # уведомление после merge
   deploy-dev.yml              # auto deploy на develop
   deploy-prod.yml             # manual deploy на main
-.cursor/BUGBOT.md             # правила для Cursor Bugbot
+.github/copilot-instructions.md  # правила для GitHub Copilot
+.cursor/BUGBOT.md                # Cursor Bugbot (отложено)
 PROJECT_CONFIG.yaml           # конфигурация процесса
 plan-github-cursor-telegram-merge.md      # план внедрения
 github-cursor-telegram-merge-process.md   # регламент
@@ -55,7 +56,7 @@ git push -u origin feature/TASK-001-my-change
 3. Secrets (Telegram)
 4. Environments (development, production)
 5. Rulesets
-6. Cursor Bugbot
+6. GitHub Copilot Free (см. SETUP_GITHUB §7)
 7. Тестовый PR
 
 ## Документация процесса

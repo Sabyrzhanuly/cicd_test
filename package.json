@@ -2,7 +2,7 @@
   "name": "cicd-sandbox",
   "version": "0.1.0",
   "private": true,
-  "description": "Тестовый проект для отработки CI/CD процесса: GitHub + Bugbot + Telegram",
+  "description": "Тестовый проект: GitHub + Copilot Free + Telegram CI/CD",
   "type": "module",
   "main": "src/index.js",
   "scripts": {

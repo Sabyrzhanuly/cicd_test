@@ -1,7 +1,7 @@
 # Bugbot Review Guidelines — cicd-sandbox
 
-> Тестовый проект для отработки CI/CD процесса.  
-> Настройте правила под свой стек при переносе в реальный репозиторий.
+> **Статус: отложено.** Сейчас используем GitHub Copilot Free (см. `.github/copilot-instructions.md`).  
+> Подключить Bugbot позже, когда понадобится AI-review прямо в PR.
 
 ## Общие правила
 

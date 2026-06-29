@@ -307,36 +307,26 @@ Repository → Settings → Secrets → Actions:
 
 ---
 
-### Этап 5. Cursor Bugbot (0.5–1 день)
+### Этап 5. AI review (0.5–1 день)
 
-1. Cursor Dashboard → Integrations → GitHub.
-2. Выбрать org и репозитории.
-3. Bugbot → Enable для каждого репо.
+**Вариант A — GitHub Copilot Free (рекомендуется для старта без подписок):**
 
-#### `.cursor/BUGBOT.md`
+1. [github.com/settings/copilot](https://github.com/settings/copilot) → Copilot Free
+2. Создать `.github/copilot-instructions.md` (§13a регламента)
+3. IDE: расширение GitHub Copilot
+4. PR review — human approval (Copilot code review только на Pro+)
 
-Создать в **корне каждого репо**. Базовый шаблон — §13 регламента. Добавить секции под свой стек:
+**Вариант B — Cursor Bugbot (если есть подписка Cursor):**
 
-```markdown
-## Backend (<stack>)
-- ...
+1. Cursor Dashboard → Integrations → GitHub
+2. Bugbot → Enable для каждого репо
+3. `.cursor/BUGBOT.md` — §13 регламента
 
-## Frontend (<stack>)
-- ...
+- [ ] Copilot Free или Bugbot настроен
+- [ ] Инструкции AI (copilot-instructions.md или BUGBOT.md) в репо
+- [ ] Тестовый PR → CI + human review
 
-## Database
-- ...
-
-## Security
-- ...
-```
-
-- [ ] GitHub integration.
-- [ ] Bugbot enabled.
-- [ ] `BUGBOT.md` в репо(ах).
-- [ ] Тестовый PR → комментарии Bugbot.
-
-**Режим:** начать с `advisory` (`cursor_bugbot_mode`). Required check — только после 2–4 недель стабильной работы.
+**Режим:** advisory. Required AI check — только после стабильной работы.
 
 ---
 

@@ -1,5 +1,5 @@
 # --- PROJECT CONFIG ---
-# Тестовый sandbox для отработки плана GitHub + Cursor Bugbot + Telegram
+# Тестовый sandbox: GitHub + Copilot Free + Telegram
 
 project_name: "cicd-sandbox"
 
@@ -25,7 +25,17 @@ ci_jobs:
 github_org: "Sabyrzhanuly"
 github_plan: free
 
-cursor_bugbot_mode: advisory
+# AI review: github_copilot (Free) | cursor_bugbot (позже)
+ai_review:
+  provider: github_copilot
+  plan: free
+  mode: advisory
+  instructions_file: .github/copilot-instructions.md
+  # Copilot code review в PR — только на Pro/Pro+; Free = IDE + инструкции репо
+  pr_code_review: false
+
+# Cursor Bugbot — отложено
+cursor_bugbot_mode: disabled
 
 telegram_group: "SBS DEV"
 telegram_bot_token_secret: TELEGRAM_BOT_TOKEN

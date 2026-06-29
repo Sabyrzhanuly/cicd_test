@@ -142,15 +142,31 @@ Settings → Rules → Rulesets (создать вручную в GitHub UI).
 
 ---
 
-## 8. Cursor Bugbot
+## 8. AI review — GitHub Copilot (Free) или Cursor Bugbot
+
+### Вариант A: GitHub Copilot Free (текущий для cicd_test)
+
+1. [GitHub Copilot settings](https://github.com/settings/copilot) → включить **Copilot Free**
+2. IDE: расширение GitHub Copilot (VS Code / Cursor / JetBrains)
+3. Инструкции репозитория: `.github/copilot-instructions.md`
+
+**Free plan:** автодополнение и chat в IDE.  
+**Не входит:** [Copilot code review](https://docs.github.com/en/copilot/concepts/agents/code-review) в PR — нужен Pro/Pro+.
+
+Ревью PR на Free: **человек** (approval в Ruleset) + локально `npm run ci`.
+
+### Вариант B: Copilot code review (Pro)
+
+1. Repo → Settings → Copilot → Code review → Enable
+2. В PR: Reviewers → **Copilot**, или automatic review в rules
+
+### Вариант C: Cursor Bugbot (опционально, позже)
 
 1. [Cursor Dashboard](https://cursor.com/dashboard) → Integrations → GitHub
-2. Подключить org и репозиторий
-3. Bugbot → Enable
-4. Правила review: `.cursor/BUGBOT.md`
+2. Bugbot → Enable
+3. Правила: `.cursor/BUGBOT.md`
 
-Режим: **advisory** — Bugbot комментирует, человек решает.  
-Required check — только после 2–4 недель стабильной работы.
+Режим **advisory** — AI комментирует, человек решает.
 
 ---
 
