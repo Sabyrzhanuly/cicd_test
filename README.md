@@ -4,6 +4,13 @@
 
 **GitHub (PR + Rulesets) → Copilot Free → Telegram → Deploy**
 
+## Статус настройки
+
+- [x] CI (lint, test, build)
+- [x] Rulesets для `develop` / `main`
+- [x] Telegram secrets (SBS DEV)
+- [ ] Первый тестовый PR → merge → уведомление в Telegram
+
 ## Быстрый старт
 
 ```bash
