@@ -26,11 +26,15 @@ repositories:
     staging_branch: develop  # develop | staging | ...
     stack: "<стек>"          # напр. django+vue, node, go, ...
 
-# Имена веток (если отличаются от стандартных)
+# Имена веток
 branches:
   production: main           # main | master
   staging: develop           # develop | staging
-  feature_prefix: feature    # feature/TASK-123-name
+  # Стратегия рабочих веток (выбрать одну):
+  branch_strategy: dev_per_developer   # dev_per_developer | feature_per_task
+  dev_prefix: dev            # dev/nurlan, dev/ivan — для больших команд
+  feature_prefix: feature    # feature/short-name — альтернатива для малых команд
+  hotfix_prefix: hotfix      # hotfix/critical-login — срочные правки в production
 
 # CI job names (должны совпадать с required checks в Ruleset)
 ci_jobs:
@@ -99,7 +103,7 @@ cross_repo_pr_policy: "указывать номер PR в соседнем ре
 | URL репозитория | |
 | Production-ветка (`main` / `master`) | |
 | Staging-ветка (`develop`) — есть? | |
-| Рабочие ветки команды (feature/* или личные?) | |
+| Рабочие ветки команды (`dev/*` или `feature/*`) | |
 | CI workflow — есть? | |
 | Required checks в GitHub — настроены? | |
 | Branch protection / Rulesets | |
@@ -121,24 +125,45 @@ cross_repo_pr_policy: "указывать номер PR в соседнем ре
 ```text
 <production>     → production (main или master)
 <staging>        → dev/staging (develop)
-feature/<TASK>-short-name
-bugfix/<TASK>-short-name
-hotfix/<TASK>-short-name
+dev/<имя>        → постоянная ветка разработчика (основная модель)
+hotfix/<кратко>  → срочный фикс в production
 ```
 
-**Не использовать** постоянные личные ветки (`dev-ivan`, `dev-team`) — только task-based.
+### Выбор стратегии (`branch_strategy`)
 
-### Поток в staging
+| Стратегия | Когда | Формат ветки | TASK-ID |
+|-----------|-------|--------------|---------|
+| **`dev_per_developer`** | Много разработчиков и задач | `dev/nurlan`, `dev/ivan` | В PR и commit, **не** в имени ветки |
+| `feature_per_task` | Малая команда, строгий трекер | `feature/short-name` | Желательно в PR / commit |
+
+**Рекомендация для больших команд:** `dev_per_developer`.
+
+- У каждого разработчика **одна постоянная** ветка `dev/<имя>`.
+- Задачи (TASK-123, TASK-456) указываются в **описании PR** и **commit message**.
+- PR в `<staging>` — **порциями** (1–3 дня или одна логическая тема), не «раз накопилось за месяц».
+- **Ежедневно:** `git merge origin/<staging>` в свою `dev/<имя>`.
+
+**Rulesets:** защищаем только `<staging>` и `<production>`.  
+Ветки `dev/*` **не защищаем** (или только block force push).
+
+### Поток в staging (dev_per_developer)
 
 ```text
-feature/* → PR → <staging>
-  → Bugbot
+dev/nurlan (ежедневная работа, push сколько угодно)
+  → PR dev/nurlan → <staging>  (когда порция готова)
   → CI
   → human approval
-  → Merge Queue
+  → merge
   → <staging>
   → (опционально) deploy dev
   → Telegram
+```
+
+### Поток в staging (feature_per_task — альтернатива)
+
+```text
+feature/short-name → PR → <staging>
+  → CI → human approval → merge → Telegram
 ```
 
 ### Поток в production
@@ -147,7 +172,7 @@ feature/* → PR → <staging>
 <staging> → PR → <production>
   → CI
   → human approval (1–2)
-  → Merge Queue
+  → merge
   → <production>
   → Telegram
   → deploy prod (manual или auto — по политике)
@@ -156,9 +181,14 @@ feature/* → PR → <staging>
 ### Hotfix
 
 ```text
-hotfix/* → PR → <production>
+hotfix/<кратко> → PR → <production>
   → затем обязательно PR: <production> → <staging>
 ```
+
+### Запрещено
+
+- Direct push в `<staging>` и `<production>` (только PR).
+- PR «на полгода работы» без sync с `<staging>` — ломает review и CI.
 
 ---
 
@@ -179,7 +209,7 @@ hotfix/* → PR → <production>
 
 ### Этап 0. Согласование (0.5 дня)
 
-- [ ] Объявить команде формат веток: `feature/<TASK>-name`.
+- [ ] Объявить стратегию веток: `dev/<имя>` (большая команда) или `feature/*` (малая).
 - [ ] Зафиксировать имена `<staging>` и `<production>`.
 - [ ] Назначить ответственных: rulesets, secrets, Bugbot.
 - [ ] Для `multi`: договориться про связанные PR между репо.
@@ -391,19 +421,31 @@ concurrency:
 
 ### Этап 9. Миграция команды (1–2 недели)
 
-Для каждой старой рабочей ветки:
+**Модель `dev/<имя>`** (из старых личных веток `nurlan`, `dev-ivan`):
+
+```bash
+git fetch origin
+git checkout nurlan   # или dev-ivan, и т.д.
+git branch -m dev/nurlan
+git push -u origin dev/nurlan
+git push origin --delete nurlan   # после проверки
+# дальше: PR dev/nurlan → <staging> порциями
+```
+
+**Модель `feature/*`** (если выбрана альтернатива):
 
 ```bash
 git fetch origin
 git checkout <old-branch>
-git checkout -b feature/<TASK>-current-work
-git push -u origin feature/<TASK>-current-work
+git checkout -b feature/short-name
+git push -u origin feature/short-name
 # PR → <staging>
 ```
 
-- [ ] Все активные задачи перенесены в `feature/*`.
-- [ ] Старые ветки удалены с remote.
-- [ ] Команда получила шпаргалку (§11).
+- [ ] У каждого разработчика есть `dev/<имя>` (или согласованная альтернатива).
+- [ ] Старые ветки (`nurlan`, `dev-team`, …) удалены с remote.
+- [ ] Команда sync с `<staging>` минимум раз в день.
+- [ ] Команда получила шпаргалку (§8).
 
 ---
 
@@ -435,23 +477,39 @@ git push -u origin feature/<TASK>-current-work
 
 ## 8. Шпаргалка для разработчиков
 
+### Модель `dev/<имя>` (большая команда)
+
 ```bash
-# Новая задача
+# Первый раз — создать свою ветку
 git checkout <staging>
 git pull origin <staging>
-git checkout -b feature/<TASK>-short-name
+git checkout -b dev/<ваше-имя>
+git push -u origin dev/<ваше-имя>
 
-# После работы
-git push origin feature/<TASK>-short-name
-# → Pull Request в <staging>
+# Каждый день — sync перед работой
+git checkout dev/<ваше-имя>
+git fetch origin
+git merge origin/<staging>
+
+# Работа, commit, push в dev/<ваше-имя> — сколько угодно
+
+# Готова порция — PR: dev/<ваше-имя> → <staging>
+# В описании PR: TASK-123, TASK-456, что именно в этом PR
 
 # После Telegram «<staging> обновлён»
-git fetch origin
+git merge origin/<staging>
+```
+
+**Commit message:** `feat(auth): TASK-123 fix login timeout`
+
+### Модель `feature/*` (альтернатива)
+
+```bash
 git checkout <staging>
 git pull origin <staging>
-
-# В своей feature-ветке
-git checkout feature/<TASK>-short-name
+git checkout -b feature/short-name
+git push -u origin feature/short-name
+# → Pull Request в <staging>
 git merge origin/<staging>
 ```
 
@@ -463,7 +521,8 @@ git merge origin/<staging>
 |------|-----------|
 | Merge Queue недоступен | Up-to-date + ручная очередь merge |
 | CI flaky | Минимальный CI сначала, стабилизировать |
-| Bugbot шумит | Advisory + tune BUGBOT.md |
+| PR с огромным diff | Sync с `<staging>` ежедневно; PR порциями 1–3 дня |
+| TASK-ID в имени ветки неудобен | `dev/<имя>` + TASK в PR и commit |
 | Multi-repo рассинхрон | Связанные PR в описании |
 | Обход rulesets | Пустой bypass list |
 | Случайный auto-deploy prod | Только manual + environment approval |
@@ -478,7 +537,7 @@ git merge origin/<staging>
 - [ ] Telegram после merge.
 - [ ] Bugbot комментирует PR.
 - [ ] PR template + CODEOWNERS на месте.
-- [ ] Команда на `feature/*`, личные ветки закрыты.
+- [ ] Команда на `dev/<имя>` (или согласованной альтернативе).
 - [ ] README/CONTRIBUTING обновлён.
 
 ---
@@ -535,10 +594,12 @@ repositories:
     default_branch: main
     staging_branch: develop
     stack: "node+react"
+branches:
+  branch_strategy: dev_per_developer
+  dev_prefix: dev
 ci_jobs: [lint, test, build]
 github_org: acme
 github_plan: team
-cursor_bugbot_mode: advisory
 deploy_dev_trigger: push
 deploy_prod_trigger: manual
 ```

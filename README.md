@@ -40,18 +40,22 @@ SETUP_GITHUB.md               # пошаговая настройка GitHub
 |-------|------------|
 | `main` | production |
 | `develop` | staging |
-| `feature/TASK-name` | задачи |
+| `dev/<имя>` | постоянная ветка разработчика (`dev/nurlan`, …) |
+| `hotfix/<кратко>` | срочный фикс в production |
+
+TASK-ID — в PR и commit, не в имени ветки. Подробнее: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Локальная разработка
 
 ```bash
 git checkout develop
 git pull origin develop
-git checkout -b feature/TASK-001-my-change
+git checkout dev/nurlan          # ваша постоянная ветка
+git merge origin/develop         # sync перед работой
 # ... работа ...
 npm run ci
-git push -u origin feature/TASK-001-my-change
-# → Pull Request в develop
+git push origin dev/nurlan
+# → PR: dev/nurlan → develop
 ```
 
 ## Настройка GitHub

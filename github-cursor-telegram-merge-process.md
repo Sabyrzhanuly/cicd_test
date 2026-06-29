@@ -13,7 +13,9 @@
 
 - `main` — production
 - `develop` — staging
-- `feature/*`, `bugfix/*`, `hotfix/*` — рабочие ветки
+- `dev/<имя>` — постоянная ветка разработчика (основная модель)
+- `hotfix/<кратко>` — срочные правки в production
+- `feature/*` — альтернатива для малых команд
 
 ---
 
@@ -21,7 +23,7 @@
 
 | Роль | Ответственность |
 |------|-----------------|
-| Developer | feature-ветки, PR, локальный CI |
+| Developer | ветка `dev/<имя>`, PR порциями, локальный CI |
 | Reviewer | code review, approval |
 | Tech Lead | rulesets, BUGBOT.md, политики |
 | DevOps | workflows, secrets, deploy |
@@ -30,18 +32,19 @@
 
 ## 3. Поток изменений
 
-### В develop (staging)
+### В develop (staging) — модель dev/<имя>
 
 ```text
-feature/TASK-name → PR → develop
-  → Bugbot (advisory)
+dev/nurlan (ежедневная работа)
+  → PR dev/nurlan → develop  (порция готова)
   → CI (lint, test, build)
   → human approval (1)
-  → Merge Queue
   → develop
   → deploy dev (auto on push)
   → Telegram notify
 ```
+
+TASK-ID — в PR и commit, не в имени ветки.
 
 ### В main (production)
 
@@ -58,7 +61,7 @@ develop → PR → main
 ### Hotfix
 
 ```text
-hotfix/TASK-name → PR → main
+hotfix/<кратко> → PR → main
   → затем PR: main → develop (обязательно)
 ```
 
@@ -213,29 +216,36 @@ concurrency:
 
 ## 11. Шпаргалка для разработчиков
 
+### dev/<имя> (большая команда)
+
 ```bash
-# Новая задача
-git checkout develop
-git pull origin develop
-git checkout -b feature/TASK-123-short-name
+# Первый раз
+git checkout develop && git pull
+git checkout -b dev/nurlan
+git push -u origin dev/nurlan
 
-# Работа и push
-git add .
-git commit -m "feat: описание"
-git push -u origin feature/TASK-123-short-name
-# → Pull Request в develop
+# Каждый день
+git checkout dev/nurlan
+git fetch origin && git merge origin/develop
 
-# После Telegram «develop обновлён»
-git fetch origin
-git checkout develop
-git pull origin develop
+# Commit + push — сколько угодно
+git commit -m "feat(auth): TASK-123 fix timeout"
+git push origin dev/nurlan
 
-# Обновить feature-ветку
-git checkout feature/TASK-123-short-name
+# Готова порция → PR: dev/nurlan → develop
+# В PR: TASK-123, TASK-128, что вошло в этот merge
+
+# После Telegram
 git merge origin/develop
+```
 
-# Release в production (через PR)
-# develop → PR → main (не direct merge локально!)
+### feature/* (альтернатива, малая команда)
+
+```bash
+git checkout develop && git pull
+git checkout -b feature/short-name
+git push -u origin feature/short-name
+# → PR в develop
 ```
 
 ---
@@ -286,13 +296,25 @@ git merge origin/develop
 
 ## 14. Миграция со старых веток
 
+**Из `nurlan`, `dev-ivan` → `dev/<имя>`:**
+
+```bash
+git fetch origin
+git checkout nurlan
+git branch -m dev/nurlan
+git push -u origin dev/nurlan
+git push origin --delete nurlan
+# PR dev/nurlan → develop порциями
+```
+
+**Из произвольной ветки → `feature/*` (альтернатива):**
+
 ```bash
 git fetch origin
 git checkout old-branch
-git checkout -b feature/TASK-current-work
-git push -u origin feature/TASK-current-work
+git checkout -b feature/short-name
+git push -u origin feature/short-name
 # PR → develop
-# После merge — удалить old-branch с remote
 ```
 
 ---

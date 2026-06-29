@@ -42,6 +42,15 @@
 - **Исправление:** provider `github_copilot`, human review в PR; Bugbot отложен; добавить в план вариант A/B
 - **Статус:** fixed в sandbox, open в plan-github-cursor-telegram-merge.md
 
+### [2026-06-29] feature/TASK-* неудобен для большой команды
+
+- **Этап плана:** §3 схема веток
+- **Ожидание:** одна ветка на задачу
+- **Факт:** много разработчиков и задач — branch explosion, TASK в имени ветки неудобен
+- **Исправление:** `branch_strategy: dev_per_developer`, TASK-ID в PR/commit; §3, §8, §9, CONTRIBUTING
+- **Статус:** fixed
+
+### [2026-06-29] Telegram Markdown ломается на спецсимволах
 
 - **Этап плана:** Этап 4 — Telegram
 - **Ожидание:** сообщение с parse_mode Markdown всегда доставляется
