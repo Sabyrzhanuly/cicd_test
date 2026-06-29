@@ -9,6 +9,8 @@
 - Не отключать CI checks без явной причины в PR
 - Минимальный diff — не рефакторить несвязанный код в том же PR
 - Все изменения через PR, без direct push в `develop` и `main`
+- Рабочая ветка: `dev/<имя>`; TASK-ID в PR и commit
+- Перед PR: sync `git merge origin/develop` и `npm run ci`
 - Перед PR: `npm run ci`
 
 ## Backend (Node.js)

@@ -2,52 +2,90 @@
 
 ## Процесс
 
-1. Все изменения — через **Pull Request**
-2. Direct push в `develop` и `main` **запрещён** (Rulesets)
+1. Работаете в **своей** ветке `dev/<имя>` (постоянная)
+2. В **`develop`** и **`main`** — только через **Pull Request** (Rulesets)
 3. Перед PR: `npm run ci`
 4. Copilot / human review — просмотреть замечания перед merge
-5. После merge — дождаться Telegram и сделать `git pull`
+5. После merge — Telegram → `git merge origin/develop` в своей ветке
 
-## Именование веток
+## Ветки
 
-```text
-feature/TASK-123-short-description
-bugfix/TASK-456-fix-login
-hotfix/TASK-789-critical-patch
+| Ветка | Кто | Назначение |
+|-------|-----|------------|
+| `main` | все | production — только PR из `develop` |
+| `develop` | все | staging — только PR из `dev/*` |
+| `dev/<имя>` | вы | постоянная рабочая (`dev/nurlan`, …) |
+| `hotfix/<кратко>` | по необходимости | срочный фикс → PR в `main` |
+
+**TASK-ID** (TASK-123, …) — в **описании PR** и **commit message**, не обязательно в имени ветки.
+
+## Первый запуск (новый разработчик)
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b dev/<ваше-имя>
+git push -u origin dev/<ваше-имя>
 ```
 
-Не используйте личные ветки (`dev-ivan`, `work-in-progress`).
+Дальше работаете только в `dev/<ваше-имя>`.
+
+## Ежедневная работа
+
+```bash
+git checkout dev/<ваше-имя>
+git fetch origin
+git merge origin/develop    # минимум раз в день!
+
+# ... код, commit ...
+npm run ci                # перед PR обязательно
+git push origin dev/<ваше-имя>
+```
 
 ## PR в develop
 
-- Base: `develop`
-- 1 approval
-- CI: lint, test, build
-- Merge через Merge Queue (или merge commit если Free plan)
+- **Source:** `dev/<ваше-имя>`
+- **Target:** `develop`
+- **Когда:** готова **порция** (1–3 дня или одна тема), не «всё накопленное»
+- **Описание:** список TASK-ID + что именно в этом PR
+- **Checks:** lint, test, build
+- **Approval:** 1
+
+Пример заголовка PR:
+
+```text
+[TASK-123][TASK-128] auth timeout + filter by date
+```
 
 ## PR в main (release)
 
-- Base: `main`
-- Source: `develop` (или `hotfix/*` для hotfix)
+- **Source:** `develop`
+- **Target:** `main`
 - 1–2 approvals
-- CODEOWNERS review для infra-изменений
-- Deploy production — **только manual** через Actions → Deploy Production
+- Deploy production — **только manual** (Actions → Deploy Production)
 
 ## Hotfix
 
-1. `hotfix/TASK-name` → PR → `main`
-2. После merge: PR `main` → `develop` (синхронизация)
+1. `hotfix/<кратко>` от `main` → PR → `main`
+2. После merge: PR `main` → `develop`
+
+## Commit message
+
+```text
+feat(module): TASK-123 краткое описание
+fix(api): TASK-456 исправлен timeout
+```
 
 ## Локальные команды
 
 ```bash
-npm run lint    # eslint
-npm run test    # node:test
-npm run build   # artifact в dist/
+npm run lint
+npm run test
+npm run build
 npm run ci      # всё вместе
 ```
 
-## CODEOWNERS
+## Альтернатива: feature-ветки
 
-Изменения в `.github/workflows/`, `.cursor/` требуют review от `@your-org/devops`.  
-Замените placeholder teams в `.github/CODEOWNERS` на реальные.
+Для малой команды допустимо `feature/short-name` вместо `dev/<имя>`.  
+Для большой команды — только `dev/<имя>` (см. `plan-github-cursor-telegram-merge.md` §3).

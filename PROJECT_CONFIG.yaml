@@ -15,7 +15,10 @@ repositories:
 branches:
   production: main
   staging: develop
+  branch_strategy: dev_per_developer   # dev_per_developer | feature_per_task
+  dev_prefix: dev                      # dev/nurlan, dev/ivan
   feature_prefix: feature
+  hotfix_prefix: hotfix
 
 ci_jobs:
   - lint
