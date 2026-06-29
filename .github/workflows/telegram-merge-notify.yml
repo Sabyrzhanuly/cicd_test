@@ -18,6 +18,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PROJECT_NAME: cicd-sandbox
+          TELEGRAM_GROUP: SBS DEV
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.event.pull_request.base.ref }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -38,31 +39,33 @@ jobs:
             PULL_CMD="git fetch origin && git checkout main && git pull origin main"
           fi
 
-          MESSAGE=$(cat <<EOF
-          ✅ *${PROJECT_NAME}* — PR merged
+          MESSAGE="✅ ${PROJECT_NAME} — PR merged
 
-          📦 Repo: \`${REPO}\`
-          🌿 Branch: \`${BRANCH_LABEL}\`
+          📢 Группа: ${TELEGRAM_GROUP}
+          📦 Repo: ${REPO}
+          🌿 Branch: ${BRANCH_LABEL}
           🔗 PR #${PR_NUMBER}: ${PR_TITLE}
           👤 Merged by: ${MERGED_BY}
 
-          *Что сделать локально:*
-          \`\`\`
+          Что сделать локально:
           ${PULL_CMD}
-          \`\`\`
 
           В feature-ветке:
-          \`\`\`
           git merge origin/${BRANCH}
-          \`\`\`
 
-          ${PR_URL}
-          EOF
-          )
+          ${PR_URL}"
 
-          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -H "Content-Type: application/json" \
             -d "$(jq -n \
               --arg chat_id "$TELEGRAM_CHAT_ID" \
               --arg text "$MESSAGE" \
-              '{chat_id: $chat_id, text: $text, parse_mode: "Markdown", disable_web_page_preview: true}')"
+              '{chat_id: $chat_id, text: $text, disable_web_page_preview: true}')")
+
+          if ! echo "$RESPONSE" | jq -e '.ok == true' > /dev/null 2>&1; then
+            echo "Telegram API error:"
+            echo "$RESPONSE" | jq .
+            exit 1
+          fi
+
+          echo "Telegram notification sent to ${TELEGRAM_GROUP}"

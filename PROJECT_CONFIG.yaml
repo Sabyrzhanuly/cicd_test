@@ -6,7 +6,7 @@ project_name: "cicd-sandbox"
 repo_mode: single
 
 repositories:
-  - name: "your-org/cicd-sandbox"
+  - name: "Sabyrzhanuly/cicd_test"
     role: full
     default_branch: main
     staging_branch: develop
@@ -22,11 +22,12 @@ ci_jobs:
   - test
   - build
 
-github_org: "your-org"
-github_plan: team
+github_org: "Sabyrzhanuly"
+github_plan: free
 
 cursor_bugbot_mode: advisory
 
+telegram_group: "SBS DEV"
 telegram_bot_token_secret: TELEGRAM_BOT_TOKEN
 telegram_chat_id_secret: TELEGRAM_CHAT_ID
 
@@ -35,9 +36,9 @@ deploy_prod_trigger: manual
 deploy_prod_environment: production
 
 owners:
-  backend: "@your-org/backend"
-  frontend: "@your-org/frontend"
-  devops: "@your-org/devops"
-  tech_lead: "@your-org/tech-leads"
+  backend: "@Sabyrzhanuly"
+  frontend: "@Sabyrzhanuly"
+  devops: "@Sabyrzhanuly"
+  tech_lead: "@Sabyrzhanuly"
 
 cross_repo_pr_policy: "указывать номер PR в соседнем репо в описании"

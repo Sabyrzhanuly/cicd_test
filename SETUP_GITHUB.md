@@ -16,7 +16,7 @@ git init
 git add .
 git commit -m "chore: initial sandbox for CI/CD process testing"
 git branch -M main
-git remote add origin https://github.com/your-org/cicd-sandbox.git
+git remote add origin https://github.com/Sabyrzhanuly/cicd_test.git
 git push -u origin main
 ```
 
@@ -41,7 +41,14 @@ Repository → **Settings → Secrets and variables → Actions → New reposito
 | Name | Value |
 |------|-------|
 | `TELEGRAM_BOT_TOKEN` | токен от @BotFather |
-| `TELEGRAM_CHAT_ID` | ID группы (число, напр. `-1001234567890`) |
+| `TELEGRAM_CHAT_ID` | `-1004353176409` (группа **SBS DEV**) |
+
+Локальная проверка (без GitHub):
+
+```bash
+cp .env.example .env   # заполнить значениями
+npm run test:telegram
+```
 
 **Проверка chat_id:**
 

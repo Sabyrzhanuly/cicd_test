@@ -34,10 +34,10 @@
 - **Исправление:** создан полный регламент с §11–§20
 - **Статус:** fixed
 
-### [2026-06-29] Telegram workflow без secrets не падает
+### [2026-06-29] Telegram Markdown ломается на спецсимволах
 
-- **Этап плана:** Этап 4
-- **Ожидание:** workflow не ломает merge если secrets ещё не настроены
-- **Факт:** добавлен early exit с exit 0
-- **Исправление:** задокументировать в плане как рекомендацию
-- **Статус:** fixed в коде, open в плане
+- **Этап плана:** Этап 4 — Telegram
+- **Ожидание:** сообщение с parse_mode Markdown всегда доставляется
+- **Факт:** ошибка `can't parse entities` при `_` в timestamp; PR title с `_*` тоже сломает Markdown
+- **Исправление:** убрать parse_mode в workflow и test-telegram.js; plain text + jq для JSON
+- **Статус:** fixed
