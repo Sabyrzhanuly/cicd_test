@@ -4,7 +4,7 @@ import { greet, add } from "../src/index.js";
 
 describe("greet", () => {
   it("returns greeting for valid name", () => {
-    assert.equal(greet("World"), "Hello, World! — team nurlan");
+    assert.equal(greet("World"), "Hello, World! — team nurlan & ivan");
   });
 
   it("throws for empty name", () => {
