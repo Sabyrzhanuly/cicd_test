@@ -9,5 +9,6 @@ export function greet(name) {
 }
 
 export function add(a, b) {
-  return a + b;
+  const sum_ = a + b;
+  return sum_;
 }
