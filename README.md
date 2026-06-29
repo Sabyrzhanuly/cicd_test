@@ -9,7 +9,8 @@
 - [x] CI (lint, test, build)
 - [x] Rulesets для `develop` / `main`
 - [x] Telegram secrets (SBS DEV)
-- [ ] Первый тестовый PR → merge → уведомление в Telegram
+- [x] Ветка `dev/nurlan` — рабочая модель
+- [ ] Тест PR `dev/nurlan` → `develop` → Telegram
 
 ## Быстрый старт
 
