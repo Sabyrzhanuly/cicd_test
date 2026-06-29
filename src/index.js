@@ -5,7 +5,7 @@ export function greet(name) {
   if (!name || typeof name !== "string") {
     throw new Error("name must be a non-empty string");
   }
-  return `Hello, ${name}!`;
+  return `Hello, ${name}! — team ivan`;
 }
 
 export function add(a, b) {
