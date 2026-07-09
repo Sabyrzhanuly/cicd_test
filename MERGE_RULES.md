@@ -5,45 +5,49 @@
 
 ---
 
-## 1. Модель веток
+## 1. Модель веток (компания)
 
-**Личная ветка → PR в `develop` и в `main`.** PR `develop → main` **запрещён**.
+| Ветка | Роль | PR из |
+|-------|------|-------|
+| `dev/<имя>` | рабочая | push напрямую |
+| `develop` | integration | `dev/*` |
+| `stage` | pre-prod / QA | `dev/*` *(скоро)* |
+| `master` | production | `dev/*` |
 
 ```text
-dev/ivan  ──push──► dev/ivan ──PR──► develop   (staging)
-                      └────PR────► main        (production)
-dev/maria ──push──► dev/maria ──PR──► develop
-                      └────PR────► main
+dev/ivan ──push──► dev/ivan
+           ├──PR──► develop
+           ├──PR──► stage
+           └──PR──► master
 ```
 
-| Ветка | Push | Откуда PR |
-|-------|------|-----------|
-| `dev/<имя>` | только владелец | — |
-| `develop` | ❌ | `dev/*` |
-| `main` | ❌ | только `dev/*` |
+**Запрещены PR между защищёнными ветками:**  
+`develop → stage`, `develop → master`, `stage → master` и любые другие.
+
+Каждая среда — **отдельный PR** из `dev/<имя>`.
+
+> **Sandbox** (`cicd_test`): `main` вместо `master`, ветки `stage` пока нет.  
+> Логика та же.
 
 ### Почему ветки независимы
 
-- Staging и production — **разные PR** из одной `dev/<имя>`
-- Drift между ветками нормален — смотреть [BRANCH_STATUS.md](./BRANCH_STATUS.md)
-- **PR `develop → main` — запрещён**
+- Три среды — три отдельных PR из одной `dev/<имя>`
+- Drift нормален — мониторить (BRANCH_STATUS / compare)
+- Цепочки merge между `develop` / `stage` / `master` — **нельзя**
 
 **Одна постоянная ветка на человека.** TASK-ID — в PR и commit.
 
 ---
 
-## 2. Merge Queue — на **обе** ветки
+## 2. Merge Queue — на **каждую** защищённую ветку
 
-Merge Queue нужен **везде, куда несколько человек одновременно открывают PR**.
+| Ruleset | Merge Queue |
+|---------|-------------|
+| `protect-develop` | ✅ on |
+| `protect-stage` | ✅ on *(когда появится)* |
+| `protect-master` | ✅ on |
 
-| Ruleset | Merge Queue | Почему |
-|---------|-------------|--------|
-| `protect-develop` | ✅ **on** | много `dev/* → develop` параллельно |
-| `protect-main` | ✅ **on** | много `dev/* → main` параллельно |
-
-В sandbox конфликты ловили на `develop` — там была вся нагрузка. На `main` будет то же, если туда идут параллельные PR из личных веток.
-
-**Правило:** Merge Queue включается в ruleset **каждой** защищённой ветки, куда команда шлёт PR.
+**Правило:** MQ на каждой ветке, куда параллельно идут PR из `dev/*`.
 
 ---
 
@@ -60,15 +64,19 @@ git fetch origin
 # PR в develop:
 git merge origin/develop
 
-# PR в main (перед открытием / обновлением):
-git merge origin/main
+# PR в stage:
+git merge origin/stage
+
+# PR в master (sandbox: origin/main):
+git merge origin/master
 ```
 
-Идеально — **оба** merge раз в день, если ведёте PR в обе цели:
+Идеально — **все** целевые ветки раз в день:
 
 ```bash
 git merge origin/develop
-git merge origin/main
+git merge origin/stage      # когда появится
+git merge origin/master     # sandbox: origin/main
 ```
 
 ### Правило 2 — Маленькие PR
@@ -78,26 +86,27 @@ git merge origin/main
 | 1 тема, 1–3 дня | неделя накопленного |
 | один модуль | полрепозитория |
 
-Конфликт = два PR в **одну** ветку (`develop` или `main`) трогают один файл.
+Конфликт = два PR в **одну** ветку (`develop`, `stage` или `master`) трогают один файл.
 
 ### Правило 3 — Один merge в общий файл за раз
 
-Два PR в `develop` (или два в `main`) на один файл:
+Два PR в `develop` (или `stage`, или `master`) на один файл:
 
 1. Merge первого
-2. Автор второго: `git merge origin/develop` (или `origin/main`)
+2. Автор второго: `git merge origin/<целевая-ветка>`
 3. Resolve → push → merge второго
 
 Merge Queue делает шаг 2–3 автоматически для PR в очереди.
 
 ### Правило 4 — Sync после чужого merge
 
-После merge **в develop** или **в main** (Telegram):
+После merge в **develop**, **stage** или **master** (Telegram):
 
 ```bash
 git fetch origin
 git merge origin/develop
-git merge origin/main
+git merge origin/stage
+git merge origin/master    # sandbox: origin/main
 ```
 
 Подтянуть обе, даже если ваш PR только в одну.
@@ -105,7 +114,7 @@ git merge origin/main
 ### Правило 5 — Перед открытием PR
 
 ```bash
-git merge origin/<target>    # develop или main
+git merge origin/<target>    # develop | stage | master
 npm run ci
 git push origin dev/<ваше-имя>
 ```
@@ -118,12 +127,12 @@ git push origin dev/<ваше-имя>
 
 ### Разработчик
 
-1. Sync с `develop` и/или `main`
+1. Sync с `develop`, `stage`, `master`
 2. Commit → push в `dev/<имя>`
-3. PR → `develop` (staging) **и/или** PR → `main` (prod) — отдельные PR
+3. Отдельные PR → `develop` | `stage` | `master`
 4. CI + review → merge
 
-Типичный порядок: сначала PR → `develop`, потом тот же `dev/<имя>` → PR → `main`.
+Типичный порядок: `develop` → `stage` → `master` (три PR, не merge веток).
 
 ### Ревьюер
 
@@ -131,24 +140,24 @@ git push origin dev/<ваше-имя>
 - Нет конфликта с target-веткой
 - Approve → Merge (или Merge Queue)
 
-### После merge в `main`
+### После merge в `master`
 
 - Deploy production — manual (Actions)
-- Если hotfix только в `main` — обязательно PR/sync в `develop`
+- Hotfix в `master` → sync в `develop` и `stage`
 
 ---
 
 ## 5. Конфликт
 
-Решать **в `dev/<имя>`**, не на GitHub в `develop`/`main`.
+Решать **в `dev/<имя>`**, не на GitHub в целевой ветке.
 
 ```bash
 git checkout dev/<ваше-имя>
 git fetch origin
-git merge origin/develop    # или origin/main — смотря какой PR конфликтует
+git merge origin/develop    # или origin/stage, origin/master
 # убрать <<<<<<< ======= >>>>>>>
 git add .
-git commit -m "merge: resolve conflict with develop"   # или with main
+git commit -m "merge: resolve conflict with develop"   # или stage / master
 npm run ci
 git push origin dev/<ваше-имя>
 ```
@@ -157,17 +166,20 @@ git push origin dev/<ваше-имя>
 
 ## 6. Rulesets (корпоративный аккаунт)
 
-### `protect-develop` и `protect-main` — одинаковый каркас
+### `protect-develop`, `protect-stage`, `protect-master`
 
-| Параметр | `develop` | `main` |
-|----------|-----------|--------|
-| Require PR | on | on |
-| Allowed sources | `dev/*`, `hotfix/*` | `dev/*`, `hotfix/*` |
-| Required checks | `lint`, `build` | `lint`, `build` |
-| Required approvals | 1 | **2** |
-| Block force push | on | on |
-| **Merge Queue** | **on** | **on** |
-| CODEOWNERS | по желанию | **on** (рекомендуется) |
+Одинаковый каркас на каждую защищённую ветку:
+
+| Параметр | `develop` | `stage` | `master` |
+|----------|-----------|---------|----------|
+| Require PR | on | on | on |
+| Allowed sources | `dev/*`, `hotfix/*` | `dev/*` | `dev/*`, `hotfix/*` |
+| Required checks | `lint`, `build` | `lint`, `build` | `lint`, `build` |
+| Required approvals | 1 | 1 | **2** |
+| Merge Queue | **on** | **on** | **on** |
+| CODEOWNERS | опционально | опционально | **on** |
+
+> Sandbox: `main` вместо `master`, `stage` пока нет.
 
 ### `dev/*` — без ruleset
 
@@ -175,26 +187,33 @@ Direct push разрешён.
 
 ---
 
-## Запрещено
+## 7. Запрещено
 
-- **PR `develop → main`** — в production только `dev/* → main`
-- Direct push в `develop` и `main`
+- **PR между защищёнными ветками** (`develop → stage`, `develop → master`, `stage → master`, …)
+- Direct push в `develop`, `stage`, `master`
 - Merge PR с конфликтом
-- Force push в чужую `dev/<имя>` и защищённые ветки
-- Долго не sync с target-веткой (> 2–3 дней)
-- Hotfix в `main` без переноса в `develop`
+- Force push в чужую `dev/<имя>`
+- Hotfix в `master` без sync в `develop` и `stage`
 
 ---
 
 ## 8. Чеклист внедрения
 
-- [ ] Rulesets: `develop` + `main`, **Merge Queue на обеих**
-- [ ] PR только из `dev/*` (не `develop → main`)
-- [ ] CI job names = required checks
+- [ ] Rulesets: `develop`, `stage` *(скоро)*, `master` + Merge Queue на каждой
+- [ ] PR только из `dev/*`
+- [ ] CI triggers на `develop`, `stage`, `master`
 - [ ] Каждому: `dev/<имя>`
-- [ ] CONTRIBUTING + этот файл в onboarding
-- [ ] Notify после merge в `develop` и `main`
+- [ ] CONTRIBUTING + MERGE_RULES в onboarding
+- [ ] Notify после merge
 - [ ] Environment `production` + manual deploy
+
+### Когда появится `stage`
+
+1. `git checkout -b stage develop` (или от `master` — по политике)
+2. Ruleset `protect-stage`
+3. `ci.yml` → добавить `stage` в `pull_request` / `merge_group`
+4. `deploy-stage.yml` (опционально)
+5. В sync-скриптах: `git merge origin/stage`
 
 ---
 
@@ -202,9 +221,8 @@ Direct push разрешён.
 
 ```text
 Push:     только dev/<имя>
-PR:       dev/<имя> → develop (staging)
-          dev/<имя> → main (production)
-Sync:     git merge origin/develop && git merge origin/main
+PR:       dev/<имя> → develop | stage | master
+Sync:     merge origin/develop, origin/stage, origin/master
+Запрещено: develop→stage, develop→master, stage→master
 Конфликт: решать в dev/<имя>
-Queue:    Merge Queue на develop И на main
 ```

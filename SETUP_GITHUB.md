@@ -50,6 +50,8 @@ cp .env.example .env   # заполнить значениями
 npm run test:telegram
 ```
 
+Подробно для разработчиков и DevOps: **[TELEGRAM.md](./TELEGRAM.md)** (вступление в группу, что приходит после merge).
+
 **Проверка chat_id:**
 
 ```bash
