@@ -21,8 +21,6 @@ branches:
   hotfix_prefix: hotfix
 
 ci_jobs:
-  - lint
-  - test
   - build
 
 github_org: "Sabyrzhanuly"

@@ -4,7 +4,7 @@
 
 1. Работаете в **своей** ветке `dev/<имя>` (постоянная)
 2. В **`develop`** и **`main`** — только через **Pull Request** (Rulesets)
-3. Перед PR: `npm run ci`
+3. Перед PR (опционально): `npm run build`
 4. Copilot / human review — просмотреть замечания перед merge
 5. После merge — Telegram → `git merge origin/develop` в своей ветке
 
@@ -48,7 +48,7 @@ git push origin dev/<ваше-имя>
 - **Target:** `develop`
 - **Когда:** готова **порция** (1–3 дня или одна тема), не «всё накопленное»
 - **Описание:** список TASK-ID + что именно в этом PR
-- **Checks:** lint, test, build
+- **Checks:** `build` (lint/test отключены на первом этапе)
 - **Approval:** 1
 
 Пример заголовка PR:

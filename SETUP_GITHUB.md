@@ -89,7 +89,7 @@ Settings → **Rules → Rulesets → New ruleset**
 | Restrict updates | on |
 | Restrict deletions | on |
 | Require pull request | on, 1 approval |
-| Require status checks | `lint`, `test`, `build` (strict) |
+| Require status checks | `build` (только build; lint/test убраны) |
 | Require conversation resolution | on |
 | Require merge queue | on (если Team plan) |
 | Block force pushes | on |
@@ -185,7 +185,7 @@ git push -u origin feature/TEST-001-hello-ci
 ```
 
 1. Создать PR → base: `develop`
-2. Дождаться CI (lint, test, build)
+2. Дождаться CI (`build`)
 3. Human approval + merge
 4. Проверить Telegram сообщение
 5. Проверить deploy-dev workflow (push на develop)

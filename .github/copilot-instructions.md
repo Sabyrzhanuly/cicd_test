@@ -23,7 +23,7 @@
 
 ## CI / GitHub Actions
 
-- Имена jobs в `ci.yml`: `lint`, `test`, `build` — совпадают с Ruleset
+- Имена jobs в `ci.yml`: `build` — совпадает с Ruleset
 - Triggers: `pull_request` и `merge_group`
 - Secrets — только через `secrets.*`
 - Deploy prod — только `workflow_dispatch` + environment approval

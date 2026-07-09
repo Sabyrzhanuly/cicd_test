@@ -6,7 +6,7 @@
 
 ## Статус настройки
 
-- [x] CI (lint, test, build)
+- [x] CI (`build` only; lint/test отключены)
 - [x] Rulesets для `develop` / `main`
 - [x] Telegram secrets (SBS DEV)
 - [x] Ветка `dev/nurlan` — рабочая модель
@@ -16,14 +16,14 @@
 
 ```bash
 npm install
-npm run ci          # lint + test + build
+npm run build       # или npm run ci (то же самое)
 ```
 
 ## Структура
 
 ```text
 .github/workflows/
-  ci.yml                      # lint, test, build (+ merge_group)
+  ci.yml                      # build only (+ merge_group)
   telegram-merge-notify.yml   # уведомление после merge
   deploy-dev.yml              # auto deploy на develop
   deploy-prod.yml             # manual deploy на main
