@@ -38,7 +38,7 @@
 dev/nurlan (ежедневная работа)
   → PR dev/nurlan → develop  (порция готова)
   → CI (lint, test, build)
-  → human approval (1)
+  → human approval (0 — автор мержит сам)
   → develop
   → deploy dev (auto on push)
   → Telegram notify
@@ -51,7 +51,7 @@ TASK-ID — в PR и commit, не в имени ветки.
 ```text
 dev/<имя> → PR → main
   → CI
-  → human approval (2)
+  → human approval (0 — автор мержит сам)
   → Merge Queue
   → main
   → Telegram notify
@@ -119,7 +119,8 @@ Settings → Rules → Rulesets (создать вручную в GitHub UI).
 |---------|----------|
 | Target branches | `develop` |
 | Require pull request | ✓ |
-| Required approvals | 1 |
+| Required approvals | **0** |
+| Require CODEOWNERS | **off** |
 | Required status checks | `lint`, `test`, `build` |
 | Require branches up to date | ✓ |
 | Require conversation resolution | ✓ |
@@ -128,12 +129,14 @@ Settings → Rules → Rulesets (создать вручную в GitHub UI).
 | Restrict direct pushes | ✓ |
 | Allow bypass | никому |
 
-### Ruleset: `main`
+### Ruleset: `main` / `master`
 
-То же + рекомендуется:
+То же, что `develop`:
 
-- Required approvals: **2**
-- Require review from CODEOWNERS
+- Required approvals: **0**
+- Require review from CODEOWNERS: **off**
+
+Каждый разработчик мержит свой PR после зелёного CI. CODEOWNERS — advisory.
 
 ---
 
@@ -158,7 +161,7 @@ Settings → Rules → Rulesets (создать вручную в GitHub UI).
 **Free plan:** автодополнение и chat в IDE.  
 **Не входит:** [Copilot code review](https://docs.github.com/en/copilot/concepts/agents/code-review) в PR — нужен Pro/Pro+.
 
-Ревью PR на Free: **человек** (approval в Ruleset) + локально `npm run ci`.
+Ревью PR на Free: **опционально** (коллеги по желанию) + локально `npm run ci`. Merge — автор PR после зелёного CI.
 
 ### Вариант B: Copilot code review (Pro)
 
