@@ -49,14 +49,16 @@ TASK-ID — в PR и commit, не в имени ветки.
 ### В main (production)
 
 ```text
-develop → PR → main
+dev/<имя> → PR → main
   → CI
-  → human approval (1–2)
+  → human approval (2)
   → Merge Queue
   → main
   → Telegram notify
   → deploy prod (manual workflow_dispatch)
 ```
+
+**Запрещено:** PR `develop → main`. В production — только из личной ветки `dev/*`.
 
 ### Hotfix
 

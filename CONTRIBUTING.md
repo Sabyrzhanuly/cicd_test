@@ -7,9 +7,13 @@
 ```text
 dev/nurlan  ──push──►  dev/nurlan     ✅ всегда можно
 dev/ivan    ──push──►  dev/ivan       ✅ всегда можно
-dev/*       ──PR────►  develop        🔒 только PR
-develop     ──PR────►  main           🔒 только PR (release)
+dev/*       ──PR────►  develop        🔒 staging
+dev/*       ──PR────►  main           🔒 production
 ```
+
+**Не делаем PR `develop → main`.** В prod — только `dev/<имя>` → `main`.
+
+Полные правила: [MERGE_RULES.md](./MERGE_RULES.md)
 
 ## Старт (один раз)
 
@@ -29,34 +33,31 @@ git merge origin/develop      # подтянуть чужие merge
 git push origin dev/<ваше-имя>  # только сюда!
 ```
 
-Готова порция — **PR: `dev/<ваше-имя>` → `develop`**.
+Готова к staging — **PR `dev/<ваше-имя>` → `develop`**.  
+Готова к production — **PR `dev/<ваше-имя>` → `main`** (отдельный PR, не через merge develop).
 
-После merge в Telegram придёт напоминание — сделай `git merge origin/develop` в своей ветке.
+После merge в Telegram — sync обе ветки:
+
+```bash
+git merge origin/develop
+git merge origin/main
+```
 
 ## Конфликты
 
-GitHub пишет **«This branch has conflicts»** — решаешь **локально в своей ветке**, не в `develop`.
+GitHub: **«This branch has conflicts»** — решаешь в `dev/<имя>`.
 
 ```bash
-git checkout dev/<ваше-имя>
-git fetch origin
-git merge origin/develop          # здесь появятся конфликты
+git merge origin/develop    # если PR в develop
+# или
+git merge origin/main       # если PR в main
 ```
 
-1. Открой файлы с маркерами `<<<<<<<` / `=======` / `>>>>>>>`
-2. Оставь нужный код (свой + чужое из develop, или оба)
-3. Удали все маркеры конфликта
+1. Убрать маркеры `<<<<<<<` / `=======` / `>>>>>>>`
+2. `git add .` → `git commit -m "merge: resolve conflict with develop"` (или `main`)
+3. `npm run ci` → `git push`
 
-```bash
-git add .                         # или конкретные файлы
-git commit -m "merge: resolve conflict with develop"
-npm run ci                        # обязательно
-git push origin dev/<ваше-имя>
-```
-
-На GitHub PR станет **Able to merge** → merge как обычно.
-
-**Профилактика:** чаще делай `git merge origin/develop` — конфликтов будет меньше.
+**Профилактика:** sync с **обеими** ветками каждый день.
 
 ## Перед PR
 
@@ -74,10 +75,10 @@ Checks в GitHub: `lint`, `build`.
 
 TASK-ID — в PR и commit, **не** в имени ветки.
 
-## Release (делает тимлид)
-
-PR `develop` → `main`, deploy — manual (Actions → Deploy Production).
-
 ## Hotfix (редко)
 
-`hotfix/<кратко>` от `main` → PR в `main` → потом PR `main` → `develop`.
+`hotfix/<кратко>` от `main` → PR в `main` → sync в `develop`.
+
+---
+
+**Полные правила merge и анти-конфликт для компании:** [MERGE_RULES.md](./MERGE_RULES.md)

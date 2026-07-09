@@ -190,17 +190,18 @@ git push -u origin feature/TEST-001-hello-ci
 4. Проверить Telegram сообщение
 5. Проверить deploy-dev workflow (push на develop)
 
-### 9.2 Release PR → main
+### 9.2 Production PR из личной ветки
 
 ```bash
-# через GitHub UI: PR develop → main
+# PR: dev/<имя> → main (не develop → main!)
 ```
 
-1. CI зелёный
-2. 2 approvals (если настроено)
-3. Merge
-4. Telegram в канал
-5. Actions → Deploy Production → input `deploy` → approve environment
+1. Sync: `git merge origin/main` в `dev/<имя>`
+2. CI зелёный (`lint`, `build`)
+3. 2 approvals (если настроено)
+4. Merge
+5. Telegram в канал
+6. Actions → Deploy Production → input `deploy` → approve environment
 
 ### 9.3 Negative tests
 

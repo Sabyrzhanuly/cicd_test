@@ -169,14 +169,16 @@ feature/short-name → PR → <staging>
 ### Поток в production
 
 ```text
-<staging> → PR → <production>
+dev/<имя> → PR → <production>
   → CI
-  → human approval (1–2)
-  → merge
+  → human approval (2)
+  → merge (Merge Queue)
   → <production>
   → Telegram
-  → deploy prod (manual или auto — по политике)
+  → deploy prod (manual)
 ```
+
+**Запрещено:** `<staging> → PR → <production>`.
 
 ### Hotfix
 
