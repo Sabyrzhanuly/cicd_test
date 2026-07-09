@@ -1,30 +1,41 @@
 # cicd-sandbox
 
-Тестовый проект для отработки CI/CD процесса:
+Тестовый sandbox: **каждый пушит в свою `dev/<имя>`**, в `develop` и `main` — только PR.
 
-**GitHub (PR + Rulesets) → Copilot Free → Telegram → Deploy**
+## Как работать (3 шага)
 
-## develop vs main (на GitHub)
+```bash
+git checkout dev/<ваше-имя>
+git merge origin/develop          # 1. подтянуть staging
+# ... код ...
+git push origin dev/<ваше-имя>    # 2. пушить только в свою ветку
+```
 
-[![develop ahead of main](https://img.shields.io/github/commits-ahead/Sabyrzhanuly/cicd_test/develop?base=main&label=develop+ahead)](https://github.com/Sabyrzhanuly/cicd_test/compare/main...develop)
-[![main ahead of develop](https://img.shields.io/github/commits-ahead/Sabyrzhanuly/cicd_test/main?base=develop&label=main+ahead&color=red)](https://github.com/Sabyrzhanuly/cicd_test/compare/develop...main)
+3. Готово → **PR `dev/<ваше-имя>` → `develop`**
 
-| Где смотреть | Что |
-|--------------|-----|
-| **Эта страница (README)** | бейджи выше — обновляются автоматически |
-| [**Compare**](https://github.com/Sabyrzhanuly/cicd_test/compare/main...develop) | полный diff, коммиты, конфликты |
-| [**BRANCH_STATUS.md**](./BRANCH_STATUS.md) | отчёт в репо (обновляется workflow) |
-| **Issues** → `branch-status` | тот же отчёт в Issue (можно закрепить) |
+| Ветка | Push | PR |
+|-------|------|-----|
+| `dev/<имя>` | ✅ свободно | → `develop` (staging), → `main` (prod) |
+| `develop` | ❌ ruleset | PR только из `dev/*` |
+| `main` | ❌ ruleset | PR только из `dev/*` |
 
-Локально: `npm run branch:status`
+Подробнее: [CONTRIBUTING.md](./CONTRIBUTING.md) · **Правила merge:** [MERGE_RULES.md](./MERGE_RULES.md)
 
-## Статус настройки
+## develop vs main (мониторинг drift)
 
-- [x] CI (`lint` + `build`; test отключён)
-- [x] Rulesets для `develop` / `main`
-- [x] Telegram secrets (SBS DEV)
-- [x] Ветка `dev/nurlan` — рабочая модель
-- [ ] Тест PR `dev/nurlan` → `develop` → Telegram
+[![develop ahead](https://img.shields.io/github/commits-ahead/Sabyrzhanuly/cicd_test/develop?base=main&label=develop+ahead)](https://github.com/Sabyrzhanuly/cicd_test/compare/main...develop)
+[![main ahead](https://img.shields.io/github/commits-ahead/Sabyrzhanuly/cicd_test/main?base=develop&label=main+ahead&color=red)](https://github.com/Sabyrzhanuly/cicd_test/compare/develop...main)
+
+Ветки **независимы**: в prod только `dev/* → main`, **не** `develop → main`.
+
+Отчёт: [Issue #9](https://github.com/Sabyrzhanuly/cicd_test/issues/9) · [BRANCH_STATUS.md](./BRANCH_STATUS.md)
+
+## Статус sandbox
+
+- [x] CI (`lint` + `build`)
+- [x] Rulesets `develop` / `main`
+- [x] Telegram (SBS DEV)
+- [x] Модель `dev/<имя>` + PR #8
 
 ## Быстрый старт
 
@@ -51,26 +62,12 @@ SETUP_GITHUB.md               # пошаговая настройка GitHub
 
 ## Ветки
 
-| Ветка | Назначение |
-|-------|------------|
-| `main` | production |
-| `develop` | staging |
-| `dev/<имя>` | постоянная ветка разработчика (`dev/nurlan`, …) |
-| `hotfix/<кратко>` | срочный фикс в production |
+`dev/<имя>` — твоя постоянная. `develop` — staging. `main` — production.
 
-TASK-ID — в PR и commit, не в имени ветки. Подробнее: [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## Локальная разработка
+## Локально
 
 ```bash
-git checkout develop
-git pull origin develop
-git checkout dev/nurlan          # ваша постоянная ветка
-git merge origin/develop         # sync перед работой
-# ... работа ...
-npm run ci
-git push origin dev/nurlan
-# → PR: dev/nurlan → develop
+npm install && npm run ci
 ```
 
 ## Настройка GitHub

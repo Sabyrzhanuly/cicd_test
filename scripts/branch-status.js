@@ -74,7 +74,7 @@ if (mainAhead > 0 && developAhead > 0) {
   status = "main впереди develop — нужен sync в staging";
   statusEmoji = "🔴";
 } else if (developAhead > 0) {
-  status = "develop впереди main — можно release PR";
+  status = "в staging больше, чем в prod — проверьте PR dev/* → main";
   statusEmoji = "🟡";
 } else {
   status = "синхронны";
@@ -132,7 +132,10 @@ function buildMarkdown() {
     lines.push("", "> **Рекомендация:** merge `main` → `develop`");
   }
   if (developAhead > 0) {
-    lines.push("", `> **Рекомендация:** PR \`${STAGING}\` → \`${PRODUCTION}\``);
+    lines.push(
+      "",
+      `> **Напоминание:** в prod — только PR \`dev/*\` → \`${PRODUCTION}\`. **Не** \`${STAGING}\` → \`${PRODUCTION}\`.`
+    );
   }
 
   return `${lines.join("\n")}\n`;
@@ -181,7 +184,7 @@ function printTerminal() {
     console.log("  → Рекомендация: merge main → develop (синхронизировать staging)");
   }
   if (developAhead > 0) {
-    console.log(`  → Рекомендация: PR ${STAGING} → ${PRODUCTION} (release)`);
+    console.log(`  → В prod: PR dev/<имя> → ${PRODUCTION} (не ${STAGING} → ${PRODUCTION})`);
   }
   console.log("");
 }
