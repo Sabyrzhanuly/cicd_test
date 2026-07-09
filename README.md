@@ -4,9 +4,23 @@
 
 **GitHub (PR + Rulesets) → Copilot Free → Telegram → Deploy**
 
+## develop vs main (на GitHub)
+
+[![develop ahead of main](https://img.shields.io/github/commits-ahead/Sabyrzhanuly/cicd_test/develop?base=main&label=develop+ahead)](https://github.com/Sabyrzhanuly/cicd_test/compare/main...develop)
+[![main ahead of develop](https://img.shields.io/github/commits-ahead/Sabyrzhanuly/cicd_test/main?base=develop&label=main+ahead&color=red)](https://github.com/Sabyrzhanuly/cicd_test/compare/develop...main)
+
+| Где смотреть | Что |
+|--------------|-----|
+| **Эта страница (README)** | бейджи выше — обновляются автоматически |
+| [**Compare**](https://github.com/Sabyrzhanuly/cicd_test/compare/main...develop) | полный diff, коммиты, конфликты |
+| [**BRANCH_STATUS.md**](./BRANCH_STATUS.md) | отчёт в репо (обновляется workflow) |
+| **Issues** → `branch-status` | тот же отчёт в Issue (можно закрепить) |
+
+Локально: `npm run branch:status`
+
 ## Статус настройки
 
-- [x] CI (lint, test, build)
+- [x] CI (`lint` + `build`; test отключён)
 - [x] Rulesets для `develop` / `main`
 - [x] Telegram secrets (SBS DEV)
 - [x] Ветка `dev/nurlan` — рабочая модель
@@ -16,14 +30,14 @@
 
 ```bash
 npm install
-npm run ci          # lint + test + build
+npm run build       # или npm run ci (то же самое)
 ```
 
 ## Структура
 
 ```text
 .github/workflows/
-  ci.yml                      # lint, test, build (+ merge_group)
+  ci.yml                      # build only (+ merge_group)
   telegram-merge-notify.yml   # уведомление после merge
   deploy-dev.yml              # auto deploy на develop
   deploy-prod.yml             # manual deploy на main

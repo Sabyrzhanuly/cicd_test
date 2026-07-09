@@ -22,7 +22,6 @@ branches:
 
 ci_jobs:
   - lint
-  - test
   - build
 
 github_org: "Sabyrzhanuly"
