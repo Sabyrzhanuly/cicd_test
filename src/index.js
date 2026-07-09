@@ -5,9 +5,10 @@ export function greet(name) {
   if (!name || typeof name !== "string") {
     throw new Error("name must be a non-empty string");
   }
-  return `Hello, ${name}! — team nurlan & ivan`;
+  return `Hello, ${name}! — team maria & aliya & sanzhar`;
 }
 
 export function add(a, b) {
-  return a + b;
+  const sum_ = a + b;
+  return sum_;
 }
