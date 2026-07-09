@@ -33,6 +33,31 @@ git push origin dev/<ваше-имя>  # только сюда!
 
 После merge в Telegram придёт напоминание — сделай `git merge origin/develop` в своей ветке.
 
+## Конфликты
+
+GitHub пишет **«This branch has conflicts»** — решаешь **локально в своей ветке**, не в `develop`.
+
+```bash
+git checkout dev/<ваше-имя>
+git fetch origin
+git merge origin/develop          # здесь появятся конфликты
+```
+
+1. Открой файлы с маркерами `<<<<<<<` / `=======` / `>>>>>>>`
+2. Оставь нужный код (свой + чужое из develop, или оба)
+3. Удали все маркеры конфликта
+
+```bash
+git add .                         # или конкретные файлы
+git commit -m "merge: resolve conflict with develop"
+npm run ci                        # обязательно
+git push origin dev/<ваше-имя>
+```
+
+На GitHub PR станет **Able to merge** → merge как обычно.
+
+**Профилактика:** чаще делай `git merge origin/develop` — конфликтов будет меньше.
+
 ## Перед PR
 
 ```bash
