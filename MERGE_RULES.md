@@ -136,9 +136,9 @@ git push origin dev/<ваше-имя>
 
 ### Ревьюер
 
-- CI зелёный
-- Нет конфликта с target-веткой
-- Approve → Merge (или Merge Queue)
+- CI зелёный, нет конфликта
+- Review **опционален** — автор мержит сам (approvals = 0)
+- Merge Queue — если включена
 
 ### После merge в `master`
 
@@ -175,11 +175,20 @@ git push origin dev/<ваше-имя>
 | Require PR | on | on | on |
 | Allowed sources | `dev/*`, `hotfix/*` | `dev/*` | `dev/*`, `hotfix/*` |
 | Required checks | `lint`, `build` | `lint`, `build` | `lint`, `build` |
-| Required approvals | 1 | 1 | **2** |
+| Required approvals | **0** | **0** | **0** |
 | Merge Queue | **on** | **on** | **on** |
-| CODEOWNERS | опционально | опционально | **on** |
+| Require CODEOWNERS review | **off** | **off** | **off** |
+| CODEOWNERS файл | опционально, advisory | опционально | опционально |
 
-> Sandbox: `main` вместо `master`, `stage` пока нет.
+### Self-merge (каждый мержит свой PR)
+
+- **Required approvals = 0** на `develop`, `stage`, `master`
+- **Require review from CODEOWNERS = off** везде
+- Автор PR мержит **сам**, когда CI зелёный и нет конфликтов
+- Коллегу на review можно позвать **вручную** — не блокирует merge
+- Файл `.github/CODEOWNERS` — подсказка «кто шарит за путь», не обязательный gate
+
+> Sandbox: те же настройки на `main` (approvals = 0).
 
 ### `dev/*` — без ruleset
 
@@ -199,7 +208,7 @@ Direct push разрешён.
 
 ## 8. Чеклист внедрения
 
-- [ ] Rulesets: `develop`, `stage` *(скоро)*, `master` + Merge Queue на каждой
+- [ ] Rulesets: approvals **0**, CODEOWNERS review **off** на всех ветках
 - [ ] PR только из `dev/*`
 - [ ] CI triggers на `develop`, `stage`, `master`
 - [ ] Каждому: `dev/<имя>`

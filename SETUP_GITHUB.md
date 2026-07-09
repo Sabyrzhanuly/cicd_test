@@ -90,7 +90,7 @@ Settings → **Rules → Rulesets → New ruleset**
 | Restrict creations | off |
 | Restrict updates | on |
 | Restrict deletions | on |
-| Require pull request | on, 1 approval |
+| Require pull request | on, **0** approvals |
 | Require status checks | `build` (только build; lint/test убраны) |
 | Require conversation resolution | on |
 | Require merge queue | on (если Team plan) |
@@ -98,12 +98,15 @@ Settings → **Rules → Rulesets → New ruleset**
 
 **Bypass list:** пусто.
 
-### Ruleset «Protect main»
+### Ruleset «Protect main» (sandbox: `main`)
 
-То же +:
+То же, что develop:
 
-- Required approvals: **2** (рекомендуется)
-- Require review from CODEOWNERS: on
+- Required approvals: **0**
+- Require review from CODEOWNERS: **off**
+- Merge Queue: on (Team plan)
+
+Каждый разработчик мержит **свой** PR после зелёного CI.
 
 ---
 

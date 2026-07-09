@@ -1,4 +1,10 @@
-# CODEOWNERS — personal repo Sabyrzhanuly/cicd_test
+# CODEOWNERS — опционально (advisory)
+#
+# Файл подсказывает, кто знает код по путям. В Ruleset НЕ включать
+# "Require review from CODEOWNERS" — каждый разработчик сам мержит свой PR
+# после зелёного CI (required approvals = 0).
+#
+# При желании можно запросить review коллеги вручную в PR.
 
 /src/                    @Sabyrzhanuly
 /tests/                  @Sabyrzhanuly
@@ -10,3 +16,5 @@
 /PROJECT_CONFIG.yaml     @Sabyrzhanuly
 /plan-*.md               @Sabyrzhanuly
 /github-cursor-telegram-merge-process.md @Sabyrzhanuly
+/MERGE_RULES.md          @Sabyrzhanuly
+/TELEGRAM.md             @Sabyrzhanuly

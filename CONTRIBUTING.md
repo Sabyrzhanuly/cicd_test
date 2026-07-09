@@ -87,6 +87,12 @@ npm run ci
 
 Checks: `lint`, `build`.
 
+## Merge своего PR
+
+1. CI зелёный, **Able to merge**
+2. Автор нажимает **Merge** (approvals = 0, CODEOWNERS не блокирует)
+3. Review коллеги — по желанию, не обязателен
+
 ## Заголовок PR
 
 ```text
