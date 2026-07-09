@@ -152,7 +152,7 @@ hotfix/<кратко>  → срочный фикс в production
 dev/nurlan (ежедневная работа, push сколько угодно)
   → PR dev/nurlan → <staging>  (когда порция готова)
   → CI
-  → human approval
+  → human approval (0 — автор мержит сам)
   → merge
   → <staging>
   → (опционально) deploy dev
@@ -163,7 +163,7 @@ dev/nurlan (ежедневная работа, push сколько угодно)
 
 ```text
 feature/short-name → PR → <staging>
-  → CI → human approval → merge → Telegram
+  → CI → human approval (0 — автор мержит сам) → merge → Telegram
 ```
 
 ### Поток в production
@@ -171,7 +171,7 @@ feature/short-name → PR → <staging>
 ```text
 dev/<имя> → PR → <production>
   → CI
-  → human approval (2)
+  → human approval (0 — автор мержит сам)
   → merge (Merge Queue)
   → <production>
   → Telegram
@@ -285,7 +285,8 @@ Settings → Rules → Rulesets — **в каждом репо**.
 |---------|----------|
 | Target branches | `<staging>` |
 | Require pull request | ✓ |
-| Required approvals | 1 |
+| Required approvals | **0** |
+| Require CODEOWNERS review | **off** |
 | Required status checks | все из `ci_jobs` |
 | Require branches up to date | ✓ |
 | Require conversation resolution | ✓ |
@@ -296,11 +297,12 @@ Settings → Rules → Rulesets — **в каждом репо**.
 
 #### Ruleset: `<production>`
 
-То же + по желанию:
+То же, что `<staging>`:
 
-- Required approvals: **2**
-- CODEOWNERS review required
-- Stricter check set
+- Required approvals: **0**
+- Require CODEOWNERS review: **off**
+
+Каждый разработчик мержит свой PR после зелёного CI. CODEOWNERS — advisory (подсказка, не блокер).
 
 - [ ] Ruleset для `<staging>`.
 - [ ] Ruleset для `<production>`.
@@ -566,11 +568,11 @@ git merge origin/<staging>
 
 1. Создать `<staging>`.
 2. Добавить `ci.yml` (хотя бы `build` или `test`).
-3. Ruleset: PR required + 1 approval + required checks.
+3. Ruleset: PR required + **0 approvals** + required checks (CODEOWNERS review off).
 4. Telegram notify.
 5. Bugbot advisory.
 
-Merge Queue, CODEOWNERS, auto-deploy — второй итерацией.
+Merge Queue, auto-deploy — второй итерацией. CODEOWNERS — advisory.
 
 ---
 

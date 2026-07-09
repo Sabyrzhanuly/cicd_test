@@ -51,7 +51,7 @@ TASK-ID — в PR и commit, не в имени ветки.
 ```text
 dev/<имя> → PR → main
   → CI
-  → human approval (2)
+  → human approval (0 — автор мержит сам)
   → Merge Queue
   → main
   → Telegram notify
@@ -161,7 +161,7 @@ Settings → Rules → Rulesets (создать вручную в GitHub UI).
 **Free plan:** автодополнение и chat в IDE.  
 **Не входит:** [Copilot code review](https://docs.github.com/en/copilot/concepts/agents/code-review) в PR — нужен Pro/Pro+.
 
-Ревью PR на Free: **человек** (approval в Ruleset) + локально `npm run ci`.
+Ревью PR на Free: **опционально** (коллеги по желанию) + локально `npm run ci`. Merge — автор PR после зелёного CI.
 
 ### Вариант B: Copilot code review (Pro)
 
