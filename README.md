@@ -49,14 +49,14 @@ git push origin dev/<ваше-имя>    # 2. пушить только в св�
 
 ```bash
 npm install
-npm run build       # или npm run ci (то же самое)
+npm run ci          # lint + build
 ```
 
 ## Структура
 
 ```text
 .github/workflows/
-  ci.yml                      # build only (+ merge_group)
+  ci.yml                      # lint + build (+ merge_group)
   telegram-merge-notify.yml   # уведомление после merge
   deploy-dev.yml              # auto deploy на develop
   deploy-prod.yml             # manual deploy на main
@@ -66,6 +66,8 @@ PROJECT_CONFIG.yaml           # конфигурация процесса
 plan-github-cursor-telegram-merge.md      # план внедрения
 github-cursor-telegram-merge-process.md   # регламент
 SETUP_GITHUB.md               # пошаговая настройка GitHub
+MERGE_RULES.md                # правила merge и self-merge
+TELEGRAM.md                   # уведомления и вступление в группу
 ```
 
 ## Ветки
