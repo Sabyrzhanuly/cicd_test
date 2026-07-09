@@ -114,7 +114,7 @@ git merge origin/master    # sandbox: origin/main
 ### Правило 5 — Перед открытием PR
 
 ```bash
-git merge origin/<target>    # develop или main
+git merge origin/<target>    # develop | stage | master
 npm run ci
 git push origin dev/<ваше-имя>
 ```
@@ -127,12 +127,12 @@ git push origin dev/<ваше-имя>
 
 ### Разработчик
 
-1. Sync с `develop` и/или `main`
+1. Sync с `develop`, `stage`, `master`
 2. Commit → push в `dev/<имя>`
-3. PR → `develop` (staging) **и/или** PR → `main` (prod) — отдельные PR
+3. Отдельные PR → `develop` | `stage` | `master`
 4. CI + review → merge
 
-Типичный порядок: сначала PR → `develop`, потом тот же `dev/<имя>` → PR → `main`.
+Типичный порядок: `develop` → `stage` → `master` (три PR, не merge веток).
 
 ### Ревьюер
 
@@ -140,16 +140,16 @@ git push origin dev/<ваше-имя>
 - Нет конфликта с target-веткой
 - Approve → Merge (или Merge Queue)
 
-### После merge в `main`
+### После merge в `master`
 
 - Deploy production — manual (Actions)
-- Если hotfix только в `main` — обязательно PR/sync в `develop`
+- Hotfix в `master` → sync в `develop` и `stage`
 
 ---
 
 ## 5. Конфликт
 
-Решать **в `dev/<имя>`**, не на GitHub в `develop`/`main`.
+Решать **в `dev/<имя>`**, не на GitHub в целевой ветке.
 
 ```bash
 git checkout dev/<ваше-имя>
@@ -157,7 +157,7 @@ git fetch origin
 git merge origin/develop    # или origin/stage, origin/master
 # убрать <<<<<<< ======= >>>>>>>
 git add .
-git commit -m "merge: resolve conflict with develop"   # или with main
+git commit -m "merge: resolve conflict with develop"   # или stage / master
 npm run ci
 git push origin dev/<ваше-имя>
 ```
