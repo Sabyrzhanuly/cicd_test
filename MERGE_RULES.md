@@ -43,11 +43,12 @@ dev/ivan ──push──► dev/ivan
 
 | Ruleset | Merge Queue |
 |---------|-------------|
-| `protect-develop` | ✅ on |
+| `protect-develop` | ✅ on *(Team plan; Free — off)* |
 | `protect-stage` | ✅ on *(когда появится)* |
-| `protect-master` | ✅ on |
+| `protect-master` | ✅ on *(Team plan; Free — off)* |
 
-**Правило:** MQ на каждой ветке, куда параллельно идут PR из `dev/*`.
+**Правило:** MQ на каждой ветке, куда параллельно идут PR из `dev/*`.  
+Sandbox (Free): MQ недоступен — merge вручную после зелёного CI.
 
 ---
 
@@ -176,7 +177,7 @@ git push origin dev/<ваше-имя>
 | Allowed sources | `dev/*`, `hotfix/*` | `dev/*` | `dev/*`, `hotfix/*` |
 | Required checks | `lint`, `build` | `lint`, `build` | `lint`, `build` |
 | Required approvals | **0** | **0** | **0** |
-| Merge Queue | **on** | **on** | **on** |
+| Merge Queue | **on** *(Team)* | **on** *(Team)* | **on** *(Team)* |
 | Require CODEOWNERS review | **off** | **off** | **off** |
 | CODEOWNERS файл | опционально, advisory | опционально | опционально |
 

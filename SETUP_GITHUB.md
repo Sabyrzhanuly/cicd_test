@@ -88,15 +88,16 @@ Settings → **Rules → Rulesets → New ruleset**
 | Enforcement | Active |
 | Target | Branch `develop` |
 | Restrict creations | off |
-| Restrict updates | on |
+| Restrict updates | off (блокировка через Require PR) |
 | Restrict deletions | on |
 | Require pull request | on, **0** approvals |
-| Require status checks | `build` (только build; lint/test убраны) |
-| Require conversation resolution | on |
-| Require merge queue | on (если Team plan) |
+| Require status checks | `lint`, `build` |
+| Require review from CODEOWNERS | **off** |
+| Require conversation resolution | on (опционально) |
+| Require merge queue | on (только Team plan; Free — off) |
 | Block force pushes | on |
 
-**Bypass list:** пусто.
+**Bypass list:** пусто (или только bot/Copilot при необходимости).
 
 ### Ruleset «Protect main» (sandbox: `main`)
 
@@ -104,7 +105,8 @@ Settings → **Rules → Rulesets → New ruleset**
 
 - Required approvals: **0**
 - Require review from CODEOWNERS: **off**
-- Merge Queue: on (Team plan)
+- Required status checks: `lint`, `build`
+- Merge Queue: on (Team plan; Free — off)
 
 Каждый разработчик мержит **свой** PR после зелёного CI.
 
@@ -143,7 +145,7 @@ Free включает: автодополнение в IDE, ограниченн
 
 - VS Code / Cursor / JetBrains — расширение **GitHub Copilot**
 - Перед PR: `npm run ci`
-- Ревью PR — **человек** (approval в Ruleset)
+- Ревью PR — **опционально** (коллеги по желанию); merge — автор после зелёного CI
 
 ### 7.4 Copilot code review в PR (опционально, Pro)
 
@@ -161,37 +163,38 @@ Free включает: автодополнение в IDE, ограниченн
 
 ---
 
-## Шаг 8. CODEOWNERS teams
+## Шаг 8. CODEOWNERS (advisory)
 
-Заменить в `.github/CODEOWNERS`:
+Файл `.github/CODEOWNERS` — **подсказка**, кто знает код по путям.
+
+В Ruleset **не** включать «Require review from CODEOWNERS» — иначе self-merge сломается.
+
+При внедрении в org можно заменить `@Sabyrzhanuly` на teams:
 
 ```text
 @your-org/backend  → @real-org/real-team
 @your-org/devops   → @real-org/devops-team
 ```
 
-Teams должны существовать в GitHub org и иметь доступ к репо.
-
 ---
 
 ## Шаг 9. Тестовый прогон
 
-### 9.1 Feature PR → develop
+### 9.1 PR из `dev/<имя>` → develop
 
 ```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/TEST-001-hello-ci
-# изменить src/index.js или добавить тест
+git checkout develop && git pull
+git checkout -b dev/<ваше-имя>   # если ещё нет
+# изменить src/index.js
 npm run ci
 git add .
 git commit -m "feat: test CI pipeline"
-git push -u origin feature/TEST-001-hello-ci
+git push -u origin dev/<ваше-имя>
 ```
 
-1. Создать PR → base: `develop`
-2. Дождаться CI (`build`)
-3. Human approval + merge
+1. Создать PR → base: `develop`, head: `dev/<ваше-имя>`
+2. Дождаться CI (`lint`, `build`)
+3. Автор мержит сам (approvals = 0)
 4. Проверить Telegram сообщение
 5. Проверить deploy-dev workflow (push на develop)
 
@@ -203,10 +206,9 @@ git push -u origin feature/TEST-001-hello-ci
 
 1. Sync: `git merge origin/main` в `dev/<имя>`
 2. CI зелёный (`lint`, `build`)
-3. 2 approvals (если настроено)
-4. Merge
-5. Telegram в канал
-6. Actions → Deploy Production → input `deploy` → approve environment
+3. Автор мержит сам (approvals = 0)
+4. Telegram в канал
+5. Actions → Deploy Production → input `deploy` → approve environment
 
 ### 9.3 Negative tests
 
