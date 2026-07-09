@@ -13,9 +13,12 @@ repositories:
     stack: "node"
 
 branches:
-  production: main
+  production: main              # компания: master
+  preprod: stage                # скоро; sandbox: пока нет
+  integration: develop
+  # legacy aliases (sandbox)
   staging: develop
-  branch_strategy: dev_per_developer   # dev_per_developer | feature_per_task
+  branch_strategy: dev_per_developer
   dev_prefix: dev                      # dev/nurlan, dev/ivan
   feature_prefix: feature
   hotfix_prefix: hotfix
