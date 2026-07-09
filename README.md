@@ -6,7 +6,7 @@
 
 ## Статус настройки
 
-- [x] CI (`build` only; lint/test отключены)
+- [x] CI (`lint` + `build`; test отключён)
 - [x] Rulesets для `develop` / `main`
 - [x] Telegram secrets (SBS DEV)
 - [x] Ветка `dev/nurlan` — рабочая модель
