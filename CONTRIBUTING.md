@@ -1,91 +1,58 @@
-# Contributing — cicd-sandbox
+# Contributing
 
-## Процесс
+## Одно правило
 
-1. Работаете в **своей** ветке `dev/<имя>` (постоянная)
-2. В **`develop`** и **`main`** — только через **Pull Request** (Rulesets)
-3. Перед PR (опционально): `npm run build`
-4. Copilot / human review — просмотреть замечания перед merge
-5. После merge — Telegram → `git merge origin/develop` в своей ветке
+**Пушишь только в свою ветку `dev/<имя>`.** Всё остальное — через PR.
 
-## Ветки
+```text
+dev/nurlan  ──push──►  dev/nurlan     ✅ всегда можно
+dev/ivan    ──push──►  dev/ivan       ✅ всегда можно
+dev/*       ──PR────►  develop        🔒 только PR
+develop     ──PR────►  main           🔒 только PR (release)
+```
 
-| Ветка | Кто | Назначение |
-|-------|-----|------------|
-| `main` | все | production — только PR из `develop` |
-| `develop` | все | staging — только PR из `dev/*` |
-| `dev/<имя>` | вы | постоянная рабочая (`dev/nurlan`, …) |
-| `hotfix/<кратко>` | по необходимости | срочный фикс → PR в `main` |
-
-**TASK-ID** (TASK-123, …) — в **описании PR** и **commit message**, не обязательно в имени ветки.
-
-## Первый запуск (новый разработчик)
+## Старт (один раз)
 
 ```bash
-git checkout develop
-git pull origin develop
+git checkout develop && git pull
 git checkout -b dev/<ваше-имя>
 git push -u origin dev/<ваше-имя>
 ```
 
-Дальше работаете только в `dev/<ваше-имя>`.
-
-## Ежедневная работа
+## Каждый день
 
 ```bash
 git checkout dev/<ваше-имя>
 git fetch origin
-git merge origin/develop    # минимум раз в день!
-
+git merge origin/develop      # подтянуть чужие merge
 # ... код, commit ...
-npm run ci                # перед PR обязательно
-git push origin dev/<ваше-имя>
+git push origin dev/<ваше-имя>  # только сюда!
 ```
 
-## PR в develop
+Готова порция — **PR: `dev/<ваше-имя>` → `develop`**.
 
-- **Source:** `dev/<ваше-имя>`
-- **Target:** `develop`
-- **Когда:** готова **порция** (1–3 дня или одна тема), не «всё накопленное»
-- **Описание:** список TASK-ID + что именно в этом PR
-- **Checks:** `lint`, `build` (test отключён)
-- **Approval:** 1
+После merge в Telegram придёт напоминание — сделай `git merge origin/develop` в своей ветке.
 
-Пример заголовка PR:
-
-```text
-[TASK-123][TASK-128] auth timeout + filter by date
-```
-
-## PR в main (release)
-
-- **Source:** `develop`
-- **Target:** `main`
-- 1–2 approvals
-- Deploy production — **только manual** (Actions → Deploy Production)
-
-## Hotfix
-
-1. `hotfix/<кратко>` от `main` → PR → `main`
-2. После merge: PR `main` → `develop`
-
-## Commit message
-
-```text
-feat(module): TASK-123 краткое описание
-fix(api): TASK-456 исправлен timeout
-```
-
-## Локальные команды
+## Перед PR
 
 ```bash
-npm run lint
-npm run test
-npm run build
-npm run ci      # всё вместе
+npm run ci
 ```
 
-## Альтернатива: feature-ветки
+Checks в GitHub: `lint`, `build`.
 
-Для малой команды допустимо `feature/short-name` вместо `dev/<имя>`.  
-Для большой команды — только `dev/<имя>` (см. `plan-github-cursor-telegram-merge.md` §3).
+## Заголовок PR
+
+```text
+[TASK-123] кратко что сделано
+```
+
+TASK-ID — в PR и commit, **не** в имени ветки.
+
+## Release (делает тимлид)
+
+PR `develop` → `main`, deploy — manual (Actions → Deploy Production).
+
+## Hotfix (редко)
+
+`hotfix/<кратко>` от `main` → PR в `main` → потом PR `main` → `develop`.
