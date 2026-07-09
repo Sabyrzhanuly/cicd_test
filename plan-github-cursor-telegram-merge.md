@@ -348,7 +348,7 @@ Repository → Settings → Secrets → Actions:
 1. [github.com/settings/copilot](https://github.com/settings/copilot) → Copilot Free
 2. Создать `.github/copilot-instructions.md` (§13a регламента)
 3. IDE: расширение GitHub Copilot
-4. PR review — human approval (Copilot code review только на Pro+)
+4. PR review — опционально (коллеги по желанию); merge — автор после зелёного CI (Copilot code review только на Pro+).
 
 **Вариант B — Cursor Bugbot (если есть подписка Cursor):**
 
