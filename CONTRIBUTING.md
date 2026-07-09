@@ -96,3 +96,12 @@ Checks: `lint`, `build`.
 ## Hotfix
 
 `hotfix/<кратко>` от `master` → PR в `master` → sync в `develop` и `stage`.
+
+---
+
+## Telegram
+
+После merge PR в группу приходит напоминание **сделать `git merge origin/<ветка>`**.
+
+- Как вступить в группу и что делать после уведомления: **[TELEGRAM.md](./TELEGRAM.md)**
+- Sandbox: группа **SBS DEV**
